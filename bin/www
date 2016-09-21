@@ -32,7 +32,6 @@ var server = http.createServer(app);
 // Create your deepstream server
 var deepstream = new Deepstream({
                     "port" : 3000,
-                    "tcpPort" : 3000,
                     "httpServer" : server
                  });
 // Pass it the existing HTTP server
