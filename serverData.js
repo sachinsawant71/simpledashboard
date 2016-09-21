@@ -74,7 +74,7 @@ var generateEventData = function() {
 }
 
 var init = function() {
-	ds = deepstream( 'localhost:3000' );
+	ds = deepstream( 'localhost:6021' );
 	ds.login( {}, function() {
 
         //set server information data 
