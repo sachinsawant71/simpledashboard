@@ -1,0 +1,82 @@
+/* CUSTOM STYLES */
+
+footer.page-footer {
+   padding: 0px;
+}
+
+.navbar {
+    border-radius: 0px;
+}
+
+footer.page-footer .footer-copyright {
+    height: 30px;
+    line-height: 30px;
+}
+
+.noteCount {
+    position: absolute;
+    top: -4px;
+    left: 15px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border: 1px solid transparent;
+  min-width: 10px;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  border-radius: 99999px
+}
+
+.badge.badge-default {
+  background-color: #ccc
+}
+
+.badge.badge-primary {
+  background-color: #2196F3
+}
+
+.badge.badge-secondary {
+  background-color: #323a45
+}
+
+.badge.badge-success {
+  background-color: #66BB6A
+}
+
+.badge.badge-warning {
+  background-color: #FFEE58
+}
+
+.badge.badge-info {
+  background-color: #29B6F6
+}
+
+.badge.badge-danger {
+  background-color: #EF5350
+}
+
+.section  {
+    margin-top: 2rem;
+}
+
+.card-padding {
+   padding-top : 20px;
+   padding-bottom : 20px;
+   padding-left : 50px;
+   padding-right : 50px;
+}
+
+.huge {
+    font-size: 40px;
+}
+
+.text-right {
+    text-align: right;
+}

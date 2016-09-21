@@ -1,0 +1,27 @@
+{
+  "name": "iotapp",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Sachin Sawant <sachin_sawant71@yahoo.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "MDBootstrap": "*",
+    "angular": "1.4.12",
+    "angular-morris": "angular-morris-chart#^1.3.0",
+    "deepstream.io-client-js": "^1.0.2",
+    "angular-moment": "^0.10.3",
+    "d3": "^4.2.2",
+    "nvd3": "^1.8.4",
+    "angularjs-nvd3-directives": "^0.0.7"
+  }
+}

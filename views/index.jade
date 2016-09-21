@@ -1,0 +1,83 @@
+extends layout
+
+block content
+  header
+      nav.navbar.navbar-dark.bg-primary
+        // Collapse button
+        button.navbar-toggler.hidden-sm-up(type='button', data-toggle='collapse', data-target='#collapseEx2')
+          i.fa.fa-bars
+        .container
+          // Collapse content
+          #collapseEx2.collapse.navbar-toggleable-xs.pull-left
+            a.navbar-brand(href='#') IOT Realtime Dashboard 
+          ul.nav.navbar-nav.pull-right
+            li.nav-item
+              a.nav-link(href='#')
+                 span
+                     i.fa.fa-bell.fa-fw
+                 .noteCount
+                    span.badge.badge-danger 4                 
+            li.nav-item
+              a.nav-link(href='#')
+                 i.fa.fa-cogs.fa-fw
+            li.nav-item
+              a.nav-link(href='#') Signout
+  main(ng-controller="DashboardCtrl")
+   .container
+     .section
+       .row
+          .col-md-4
+              .card
+                .card-heading.card-primary.card-padding
+                  .row.white-text
+                    .col-md-3
+                      i.fa.fa-link.fa-5x
+                    .col-md-9.text-right
+                      .huge {{serverInfo.connectedDevices}}
+                      div Connected Devices! 
+                .card-block
+                  h5.card-text Last device connected one hour ago!
+          .col-md-4
+              .card
+                .card-heading.card-danger.card-padding
+                  .row.white-text
+                    .col-md-3
+                      i.fa.fa-exclamation-circle.fa-5x
+                    .col-md-9.text-right
+                      .huge {{serverInfo.totalExceptions}}
+                      div System Exceptions
+                .card-block
+                  h5.card-text 3 new exceptions in last minute.  
+          .col-md-4
+              .card
+                .card-heading.card-success.card-padding
+                  .row.white-text
+                    .col-md-3
+                      i.fa.fa-random.fa-5x
+                    .col-md-9.text-right
+                      .huge {{serverInfo.eventsReceived}}
+                      div Events Received
+                .card-block
+                  h5.card-text Server Start Time: 
+                     span(am-time-ago="serverInfo.serverStartDate")
+       .row
+          .col-md-6
+            .card.card-block
+              h4.card-title Temperature Details
+              div(ng-if="serverInfo.connectedDevices > 0")
+                  div(line-chart='', line-x-label-format="getXAxis", line-date-format="xLabelFormat", line-data='chart1Data', line-xkey='y', line-ykeys='lineYKeys', line-labels='lineLabels', line-colors='lineColors')
+              div(ng-if="serverInfo.connectedDevices == 0")
+                  .chip
+                    |  No Connected Device!                  
+          .col-md-6
+            .card.card-block
+              h4.card-title Energy Consumption
+              div(ng-if="serverInfo.connectedDevices > 0")
+                  div(line-chart='',line-x-label-format="getXAxis", line-date-format="xLabelFormat" ,line-data='chart2Data', line-xkey='y', line-ykeys='lineYKeys', line-labels='lineLabels', line-colors='lineColors')
+              div(ng-if="serverInfo.connectedDevices == 0")
+                  .chip
+                    |  No Connected Device!   
+  footer.page-footer.footer.blue.navbar.navbar-fixed-bottom
+    .footer-copyright
+        | © 2016 Copyright: 
+        a(href='#')  IoTTeamWork 
