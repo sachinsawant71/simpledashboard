@@ -141,8 +141,7 @@ Desktop.ini
 dist
 build
 eggs
-parts
-bin
+part
 var
 sdist
 develop-eggs
