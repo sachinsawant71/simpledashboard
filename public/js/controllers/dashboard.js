@@ -50,6 +50,22 @@ angular.module('yapp')
     serverEventData.subscribe(function() {
                 var eventData = serverEventData.get();
 
+                $scope.deviceCurrentInfo = [];
+
+                for (var property in eventData) {
+                    if (eventData.hasOwnProperty(property)) {
+                        var eventItem = eventData[property];
+                        var arrayLength =  eventItem.digitalReading.length;
+
+                        var deviceInfo = {
+                            deviceName : property,
+                            tempReading : eventItem.analogReading[arrayLength - 1],
+                            status : eventItem.digitalReading[arrayLength - 1]
+                        }
+                        $scope.deviceCurrentInfo.push(deviceInfo);
+                    }
+                }                
+
                 var temperatureArray = [];
                 var energyArray = [];
 
@@ -66,8 +82,8 @@ angular.module('yapp')
                     for (var property in eventData) {
                         if (eventData.hasOwnProperty(property)) {
                             var eventItem = eventData[property];
-                            var itemEnergyValue = eventItem.energyReading[i];
-                            var itemTempValue = eventItem.temperatureReading[i];
+                            var itemEnergyValue = eventItem.digitalReading[i];
+                            var itemTempValue = eventItem.analogReading[i];
                             temparatureData[eventItem.serviceId] =  itemTempValue;
                             energyData[eventItem.serviceId] =  itemEnergyValue;
                         }

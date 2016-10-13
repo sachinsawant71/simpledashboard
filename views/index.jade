@@ -60,23 +60,32 @@ block content
                 .card-block
                   h5.card-text Server Start Time: 
                      span(am-time-ago="serverInfo.serverStartDate")
-       .row
-          .col-md-6
+       .row                 
+          .col-md-12
             .card.card-block
-              h4.card-title Temperature Details
+              h4.card-title Device Status
+              div.main(ng-if="serverInfo.connectedDevices > 0")
+                  ul
+                    li.card(ng-repeat="deviceData in deviceCurrentInfo")
+                        .card__flipper
+                          .card__front
+                              p.card__name
+                                span
+                                br
+                                | Device {{deviceData.deviceName}}
+                              p.card__num {{deviceData.status ? "ON" : "OFF"}}
+              div(ng-if="serverInfo.connectedDevices == 0")
+                  .chip
+                    |  No Connected Devices!
+       .row
+          .col-md-12
+            .card.card-block
+              h4.card-title Temperature Readings
               div(ng-if="serverInfo.connectedDevices > 0")
                   div(line-chart='', line-x-label-format="getXAxis", line-date-format="xLabelFormat", line-data='chart1Data', line-xkey='y', line-ykeys='lineYKeys', line-labels='lineLabels', line-colors='lineColors')
               div(ng-if="serverInfo.connectedDevices == 0")
                   .chip
-                    |  No Connected Device!                  
-          .col-md-6
-            .card.card-block
-              h4.card-title Energy Consumption
-              div(ng-if="serverInfo.connectedDevices > 0")
-                  div(line-chart='',line-x-label-format="getXAxis", line-date-format="xLabelFormat" ,line-data='chart2Data', line-xkey='y', line-ykeys='lineYKeys', line-labels='lineLabels', line-colors='lineColors')
-              div(ng-if="serverInfo.connectedDevices == 0")
-                  .chip
-                    |  No Connected Device!   
+                    |  No Connected Devices! 
   footer.page-footer.footer.blue.navbar.navbar-fixed-bottom
     .footer-copyright
         | © 2016 Copyright: 

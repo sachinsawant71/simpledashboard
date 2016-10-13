@@ -28,15 +28,14 @@ var getDataSampleForDevice = function(deviceName) {
 }
 
 var processEventData = function(eventData) {
-
     var deviceName = eventData.deviceName;
     var deviceEventData = deviceData[deviceName];
 
     //if device is not in the list 
     if (!deviceEventData) {
         deviceData[deviceName] = {
-               temperatureReading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ]),
-               energyReading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ])
+               analogReading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ]),
+               digitalReading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ])
         }        
         var serverInfo = ds.record.getRecord('serverInfo');
         var totalConnectedDevices = serverInfo.get('totalConnectedDevices');
@@ -45,8 +44,8 @@ var processEventData = function(eventData) {
         deviceData[deviceName].serviceName = deviceName;
     }
 
-    deviceData[deviceName].temperatureReading.push(eventData.temperature);
-    deviceData[deviceName].energyReading.push(eventData.energyConsumption);
+    deviceData[deviceName].analogReading.push(eventData.analogReading);
+    deviceData[deviceName].digitalReading.push(eventData.digitalFlag);
 
 
     //set server event data
@@ -69,7 +68,7 @@ var generateEventData = function() {
             });
         };
       
-        ortcClient.connect('XXXXXXXXXXX', 'myAuthenticationToken');        
+        ortcClient.connect('bN2HN1', 'myAuthenticationToken');        
 
 }
 

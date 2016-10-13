@@ -1,111 +1,205 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
+  var app = require('../app');
+  var debug = require('debug')('iotapp:server');
+  var http = require('http');
 
-var app = require('../app');
-var debug = require('debug')('iotapp:server');
-var http = require('http');
+  var Deepstream = require('deepstream.io');
+  var serverData = require('../serverData');
+  var publishClient = require('../socketWorker.js');
 
-var Deepstream = require('deepstream.io');
-var serverData = require('../serverData');
+  var net = require('net');
+  var randomInt = require('random-int');
 
+  var HOST = '127.0.0.1';
+  var PORT = 6969;
+  /**
+   * Get port from environment and store in Express.
+   */
 
-/**
- * Get port from environment and store in Express.
- */
+  var port = normalizePort(process.env.PORT || '3000');
+  app.set('port', port);
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+  /**
+   * Create HTTP server.
+   */
 
-/**
- * Create HTTP server.
- */
+  var server = http.createServer(app);
 
-var server = http.createServer(app);
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+  // Create your deepstream server
+  var deepstream = new Deepstream({
+                      "port" : 3000,
+                      "httpServer" : server
+                  });
+  // Pass it the existing HTTP server
+  deepstream.set( 'httpServer', server );
+  //deepstream.set("port", 6021);
 
-// Create your deepstream server
-var deepstream = new Deepstream({
-                    "port" : 3000,
-                    "httpServer" : server
-                 });
-// Pass it the existing HTTP server
-deepstream.set( 'httpServer', server );
-//deepstream.set("port", 6021);
+  deepstream.on('started', () => {
+    serverData.init();
+  })
 
-deepstream.on('started', () => {
-  serverData.init();
-})
+  // Start deepstream
+  deepstream.start();
 
+  server.listen(port);
+  //server.on('error', onError);
+  //server.on('listening', onListening);
 
-// Start deepstream
-deepstream.start();
+  /**
+   * Normalize a port into a number, string, or false.
+   */
 
-server.listen(port);
-//server.on('error', onError);
-//server.on('listening', onListening);
+  function normalizePort(val) {
+    var port = parseInt(val, 10);
 
-/**
- * Normalize a port into a number, string, or false.
- */
+    if (isNaN(port)) {
+      // named pipe
+      return val;
+    }
 
-function normalizePort(val) {
-  var port = parseInt(val, 10);
+    if (port >= 0) {
+      // port number
+      return port;
+    }
 
-  if (isNaN(port)) {
-    // named pipe
-    return val;
+    return false;
   }
 
-  if (port >= 0) {
-    // port number
-    return port;
-  }
+  /**
+   * Event listener for HTTP server "error" event.
+   */
 
-  return false;
-}
-
-/**
- * Event listener for HTTP server "error" event.
- */
-
-function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
-
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
-
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
+  function onError(error) {
+    if (error.syscall !== 'listen') {
       throw error;
+    }
+
+    var bind = typeof port === 'string'
+      ? 'Pipe ' + port
+      : 'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+      case 'EACCES':
+        console.error(bind + ' requires elevated privileges');
+        process.exit(1);
+        break;
+      case 'EADDRINUSE':
+        console.error(bind + ' is already in use');
+        process.exit(1);
+        break;
+      default:
+        throw error;
+    }
   }
-}
 
-/**
- * Event listener for HTTP server "listening" event.
- */
+  /**
+   * Event listener for HTTP server "listening" event.
+   */
 
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
-}
+  function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+    
+  }
+
+  //Ana1=1346; Ana2=1808; Ana3=2; IP1=1; IP2=1; IP3=1;
+  let processDataSampleForDevice = function(data) {
+
+      data = data.replace(/^"(.+(?="$))"$/, '$1');
+
+      let dataArray = data.split(";");
+
+      let readingData = {};
+
+      dataArray.forEach(function(element){
+          let dataPointElements = element.trim().split("=");
+
+          let readingKey =  dataPointElements[0];
+          let readingValue =  dataPointElements[1];
+
+          let deviceID = readingKey.match(/\d/g);
+
+          if (!readingData[deviceID]) {
+              readingData[deviceID] = {};
+          }
+
+          if (readingKey.startsWith("Ana")){
+              readingData[deviceID].analog = readingValue;
+
+          }
+
+          if (readingKey.startsWith("IP")){
+              readingData[deviceID].digital = readingValue;
+          }
+
+      });
+
+      
+      let deviceReadingData = []
+      for (let property in readingData) {
+        if (readingData.hasOwnProperty(property)) {
+            let dataSample = {
+                deviceName : property,
+                analogReading : parseInt(readingData[property].analog) ,
+                digitalFlag : parseInt(readingData[property].digital)
+            }
+            deviceReadingData.push(dataSample);
+        }
+      }
+
+      return deviceReadingData;
+      
+  }
+
+
+  let socketServer = net.createServer();
+
+  socketServer.on('error', (err) => {
+          console.log('In error');
+          console.log(err);
+  });
+  
+  socketServer.on('listening', () => {
+          console.log(server.address().address + ":" + server.address().port)
+  });
+
+  socketServer.on('close', () => {
+      console.log(server.address().address + ":" + server.address().port)
+  })
+  
+  socketServer.on('connection', (socket) => {
+    
+    socket.on('data', (data) => {
+      let processedData = processDataSampleForDevice(new String(data));
+      processedData.forEach(function(deviceData){
+          console.log(deviceData);
+          publishClient.sendMessage(JSON.stringify(deviceData));
+      })
+    });
+
+    socket.on('error', (err) => {
+      console.log(err.toString());
+    });
+
+    socket.on('end', () => {
+      console.log("ending connection");
+    });
+
+    socket.pipe(socket);
+
+  });
+
+  socketServer.listen(PORT,HOST);
+
+  console.log('Server listening on ' + HOST +':'+ PORT);
+
+
