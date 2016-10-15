@@ -114,49 +114,25 @@
   //Ana1=1346; Ana2=1808; Ana3=2; IP1=1; IP2=1; IP3=1;
   let processDataSampleForDevice = function(data) {
 
-      data = data.replace(/^"(.+(?="$))"$/, '$1');
-
-      let dataArray = data.split(";");
-
-      let readingData = {};
-
-      dataArray.forEach(function(element){
-          let dataPointElements = element.trim().split("=");
-
-          let readingKey =  dataPointElements[0];
-          let readingValue =  dataPointElements[1];
-
-          let deviceID = readingKey.match(/\d/g);
-
-          if (!readingData[deviceID]) {
-              readingData[deviceID] = {};
-          }
-
-          if (readingKey.startsWith("Ana")){
-              readingData[deviceID].analog = readingValue;
-
-          }
-
-          if (readingKey.startsWith("IP")){
-              readingData[deviceID].digital = readingValue;
-          }
-
-      });
-
       
-      let deviceReadingData = []
-      for (let property in readingData) {
-        if (readingData.hasOwnProperty(property)) {
-            let dataSample = {
-                deviceName : property,
-                analogReading : parseInt(readingData[property].analog) ,
-                digitalFlag : parseInt(readingData[property].digital)
-            }
-            deviceReadingData.push(dataSample);
-        }
+
+      data = data.replace(/^"(.+(?="$))"$/, '$1');
+      data = data.replace(/\\"/g, '"');
+
+      let deviceData = null;
+      console.log(data);
+
+      try {          
+          deviceData = JSON.parse(data);
+      }
+      catch(err) {
+          console.log(err);
+          deviceData = {};
       }
 
-      return deviceReadingData;
+      console.log(deviceData);
+
+      return deviceData;
       
   }
 
@@ -179,11 +155,12 @@
   socketServer.on('connection', (socket) => {
     
     socket.on('data', (data) => {
-      let processedData = processDataSampleForDevice(new String(data));
-      processedData.forEach(function(deviceData){
-          console.log(deviceData);
-          publishClient.sendMessage(JSON.stringify(deviceData));
-      })
+        console.log("Data received");
+        let processedData = processDataSampleForDevice(new String(data));
+        if (!(Object.keys(processedData).length === 0 && 
+              processedData.constructor === Object)) {
+              publishClient.sendMessage(JSON.stringify(processedData));
+        }
     });
 
     socket.on('error', (err) => {

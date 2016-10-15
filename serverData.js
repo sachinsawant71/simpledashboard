@@ -18,35 +18,38 @@ ortcClient.setClusterUrl('http://ortc-developers.realtime.co/server/2.1/');
 
 var ds = null;
 
-var getDataSampleForDevice = function(deviceName) {
-    var dataSample = {
-        deviceName : deviceName,
-        temperature : randomInt(10,100),
-        energyConsumption : randomInt(40,140)
-    }
-    return dataSample;
-}
-
 var processEventData = function(eventData) {
-    var deviceName = eventData.deviceName;
-    var deviceEventData = deviceData[deviceName];
 
+    var objectArr = Object.keys(eventData);
+    var deviceName = objectArr[0];
+
+    var deviceEventData = deviceData[deviceName];
     //if device is not in the list 
     if (!deviceEventData) {
         deviceData[deviceName] = {
-               analogReading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ]),
-               digitalReading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ])
+               voltageReading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ]),
+               temperatureReading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ]),
+               analog3Reading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ]),
+               digital1Reading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ]),
+               digital2Reading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ]),
+               digital3Reading : new FifoArray(7,[ 0, 0, 0, 0, 0, 0, 0 ])                              
         }        
         var serverInfo = ds.record.getRecord('serverInfo');
         var totalConnectedDevices = serverInfo.get('totalConnectedDevices');
-        serverInfo.set('totalConnectedDevices', totalConnectedDevices + 1);  
+        serverInfo.set('totalConnectedDevices', totalConnectedDevices + 1);
+
         deviceData[deviceName].serviceId = alphabetTrain.charAt(totalConnectedDevices);
         deviceData[deviceName].serviceName = deviceName;
     }
 
-    deviceData[deviceName].analogReading.push(eventData.analogReading);
-    deviceData[deviceName].digitalReading.push(eventData.digitalFlag);
+    var eventReadingData = eventData[deviceName];
 
+    deviceData[deviceName].voltageReading.push(eventReadingData.Ana1);
+    deviceData[deviceName].temperatureReading.push(eventReadingData.Ana2);
+    deviceData[deviceName].analog3Reading.push(eventReadingData.Ana3);
+    deviceData[deviceName].digital1Reading.push(eventReadingData.IP1);
+    deviceData[deviceName].digital2Reading.push(eventReadingData.IP2);
+    deviceData[deviceName].digital3Reading.push(eventReadingData.IP3);
 
     //set server event data
     var serverEventData = ds.record.getRecord('serverEventData');

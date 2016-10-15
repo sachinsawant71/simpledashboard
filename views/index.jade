@@ -63,7 +63,7 @@ block content
        .row                 
           .col-md-12
             .card.card-block
-              h4.card-title Device Status
+              h4.card-title Device Details
               div.main(ng-if="serverInfo.connectedDevices > 0")
                   ul
                     li.card(ng-repeat="deviceData in deviceCurrentInfo")
@@ -72,17 +72,55 @@ block content
                               p.card__name
                                 span
                                 br
-                                | Device {{deviceData.deviceName}}
-                              p.card__num {{deviceData.status ? "ON" : "OFF"}}
+                                | {{deviceData.deviceName | uppercase }}
+                              div
+                                 row
+                                    .col-md-6
+                                        .text-align-left Voltage
+                                    .col-md-6
+                                        .text-right {{deviceData.voltageReading}}
+                                 row
+                                    .col-md-6
+                                        .text-align-left Temperature
+                                    .col-md-6
+                                        .text-right {{deviceData.temperatureReading}}
+                                 row
+                                    .col-md-6
+                                        .text-align-left Analog 3
+                                    .col-md-6
+                                        .text-right {{deviceData.analog3Reading}}
+                                 row
+                                    .col-md-6
+                                        .text-align-left Digital 1
+                                    .col-md-6
+                                        .text-right {{deviceData.digital1Reading}}
+                                 row
+                                    .col-md-6
+                                        .text-align-left Digital 2
+                                    .col-md-6
+                                        .text-right {{deviceData.digital2Reading}}
+                                 row
+                                    .col-md-6
+                                        .text-align-left Digital 3
+                                    .col-md-6
+                                        .text-right {{deviceData.digital3Reading}}
               div(ng-if="serverInfo.connectedDevices == 0")
                   .chip
                     |  No Connected Devices!
        .row
-          .col-md-12
+          .col-md-6
+            .card.card-block
+              h4.card-title Voltage Readings
+              div(ng-if="serverInfo.connectedDevices > 0")
+                  div(line-chart='', line-x-label-format="getXAxis", line-date-format="xLabelFormat", line-data='chart1Data', line-xkey='y', line-ykeys='lineYKeys', line-labels='lineLabels', line-colors='lineColors')
+              div(ng-if="serverInfo.connectedDevices == 0")
+                  .chip
+                    |  No Connected Devices! 
+          .col-md-6
             .card.card-block
               h4.card-title Temperature Readings
               div(ng-if="serverInfo.connectedDevices > 0")
-                  div(line-chart='', line-x-label-format="getXAxis", line-date-format="xLabelFormat", line-data='chart1Data', line-xkey='y', line-ykeys='lineYKeys', line-labels='lineLabels', line-colors='lineColors')
+                  div(line-chart='', line-x-label-format="getXAxis", line-date-format="xLabelFormat", line-data='chart2Data', line-xkey='y', line-ykeys='lineYKeys', line-labels='lineLabels', line-colors='lineColors')
               div(ng-if="serverInfo.connectedDevices == 0")
                   .chip
                     |  No Connected Devices! 

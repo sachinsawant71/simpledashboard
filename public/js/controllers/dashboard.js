@@ -55,19 +55,23 @@ angular.module('yapp')
                 for (var property in eventData) {
                     if (eventData.hasOwnProperty(property)) {
                         var eventItem = eventData[property];
-                        var arrayLength =  eventItem.digitalReading.length;
+                        var arrayLength =  eventItem.voltageReading.length;
 
                         var deviceInfo = {
                             deviceName : property,
-                            tempReading : eventItem.analogReading[arrayLength - 1],
-                            status : eventItem.digitalReading[arrayLength - 1]
+                            voltageReading : eventItem.voltageReading[arrayLength - 1],
+                            temperatureReading : eventItem.temperatureReading[arrayLength - 1],
+                            analog3Reading : eventItem.analog3Reading[arrayLength - 1],
+                            digital1Reading : eventItem.digital1Reading[arrayLength - 1],
+                            digital2Reading : eventItem.digital2Reading[arrayLength - 1],
+                            digital3Reading : eventItem.digital3Reading[arrayLength - 1]
                         }
                         $scope.deviceCurrentInfo.push(deviceInfo);
                     }
                 }                
 
                 var temperatureArray = [];
-                var energyArray = [];
+                var voltageArray = [];
 
                 for (var i=0; i < 7; i++) {
 
@@ -75,22 +79,22 @@ angular.module('yapp')
                         "y" : i + 1
                     } 
 
-                    var energyData = {
+                    var voltageData = {
                         "y" : i + 1
                     }
 
                     for (var property in eventData) {
                         if (eventData.hasOwnProperty(property)) {
                             var eventItem = eventData[property];
-                            var itemEnergyValue = eventItem.digitalReading[i];
-                            var itemTempValue = eventItem.analogReading[i];
+                            var itemvoltageValue = eventItem.voltageReading[i];
+                            var itemTempValue = eventItem.temperatureReading[i];
                             temparatureData[eventItem.serviceId] =  itemTempValue;
-                            energyData[eventItem.serviceId] =  itemEnergyValue;
+                            voltageData[eventItem.serviceId] =  itemvoltageValue;
                         }
                     }
 
                     temperatureArray.push(temparatureData);
-                    energyArray.push(energyData);
+                    voltageArray.push(voltageData);
                 }
 
                 var lineYKeys = [];
@@ -123,13 +127,13 @@ angular.module('yapp')
                 $scope.lineLabels = lineLabels;
                 $scope.lineColors = lineColors;
 
-                $scope.chart1Data =  temperatureArray;
-                $scope.chart2Data =  energyArray;
+                $scope.chart1Data =  voltageArray;
+                $scope.chart2Data =  temperatureArray
 
                 if( !$scope.$$phase ) {
                     $scope.$apply(function() {
-                        $scope.chart1Data =  temperatureArray;
-                        $scope.chart2Data =  energyArray;
+                        $scope.chart1Data =  voltageArray;
+                        $scope.chart2Data =  temperatureArray
                     });
                 }
 
