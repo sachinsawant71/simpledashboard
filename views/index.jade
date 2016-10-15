@@ -76,34 +76,19 @@ block content
                               div
                                  row
                                     .col-md-6
-                                        .text-align-left Voltage
-                                    .col-md-6
-                                        .text-right {{deviceData.voltageReading}}
-                                 row
-                                    .col-md-6
-                                        .text-align-left Temperature
-                                    .col-md-6
-                                        .text-right {{deviceData.temperatureReading}}
-                                 row
-                                    .col-md-6
-                                        .text-align-left Analog 3
-                                    .col-md-6
-                                        .text-right {{deviceData.analog3Reading}}
-                                 row
-                                    .col-md-6
                                         .text-align-left Digital 1
                                     .col-md-6
-                                        .text-right {{deviceData.digital1Reading}}
+                                        .text-right {{deviceData.digital1Reading ? 'ON' : 'OFF'}}
                                  row
                                     .col-md-6
                                         .text-align-left Digital 2
                                     .col-md-6
-                                        .text-right {{deviceData.digital2Reading}}
+                                        .text-right {{deviceData.digital2Reading ? 'ON' : 'OFF'}}
                                  row
                                     .col-md-6
                                         .text-align-left Digital 3
                                     .col-md-6
-                                        .text-right {{deviceData.digital3Reading}}
+                                        .text-right {{deviceData.digital3Reading ? 'ON' : 'OFF'}}
               div(ng-if="serverInfo.connectedDevices == 0")
                   .chip
                     |  No Connected Devices!
