@@ -11,7 +11,7 @@
   var net = require('net');
   var randomInt = require('random-int');
 
-  var HOST = '127.0.0.1';
+  var HOST = '0.0.0.0';
   var PORT = 6969;
   /**
    * Get port from environment and store in Express.
